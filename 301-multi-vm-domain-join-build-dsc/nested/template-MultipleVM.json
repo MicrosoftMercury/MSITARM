@@ -10,6 +10,14 @@
         "description": "Name for the Virtual Machine."
       }
     },
+    "AvailabilitySet": {
+      "type": "string",
+      "defaultValue": "AvSet",
+      "minLength": 3,
+      "metadata": {
+        "description": "Name for the AvailabilitySet."
+      }
+    },
     "numberOfInstances": {
       "type": "int",
       "defaultValue": 1,
@@ -246,6 +254,7 @@
     "imagePublisher": "[parameters('imagePublisher')]",
     "sku": "[parameters('sku')]",
     "nicName": "[parameters('vmName')]",
+    
     "osDiskVhdName": "[concat('http://',parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),'osDisk')]",
     "subnetName": "[parameters('subnetName')]",
     "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
