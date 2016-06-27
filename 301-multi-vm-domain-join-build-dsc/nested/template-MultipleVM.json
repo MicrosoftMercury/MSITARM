@@ -231,7 +231,7 @@
     "branch": "master",
     "folder": "/301-multi-vm-domain-join-build-dsc/",
     "baseURL": "[concat('https://raw.githubusercontent.com/Microsoft/MSITARM/',variables('branch'),variables('folder'))]",
-
+    "availabilitySetName": "[parameters('AvailabilitySet')]",
     "DomainJoinzip": "scripts/DomainJoin.ps1.zip",
     "formatDiskszip": "scripts/FormatDataDisk.ps1.zip",
     "formatDiskstemplate": "nested/template-DataDisks.json",
@@ -342,7 +342,7 @@
       "apiVersion": "2015-01-01",
       "name": "[concat(parameters('vmName'),copyindex(1),'-DiskArray')]",
       "type": "Microsoft.Resources/deployments",
-      "copy": {
+     "copy": {
         "name": "DataDiskLoop",
         "count": "[parameters('numberOfInstances')]"
       },
@@ -392,6 +392,17 @@
       }
     },
     {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "AvailabilitySet"
+      },
+      "properties": {
+      }
+    },
+    {
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('vmName'),copyindex(1))]",
       "apiVersion": "2015-06-15",
@@ -408,11 +419,15 @@
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyindex(1),'nic1')]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyindex(1),'nic1')]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
       ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('DiskSKU').vmSize]"
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         },
         "osProfile": {
           "computerName": "[concat(parameters('vmName'),copyindex(1))]",
@@ -420,7 +435,7 @@
           "adminPassword": "[parameters('localAdminPassword')]",
           "windowsConfiguration": {
             "additionalUnattendContent": [
-              {
+             {
                 "passName": "oobesystem",
                 "componentName": "Microsoft-Windows-Shell-Setup",
                 "settingName": "Autologon",
