@@ -437,8 +437,8 @@
                 "id": "[variables('subnetRef')]"
               },
 
-              "privateIPAddress": "10.138.13.45",
-              "privateIPAllocationMethod": "Static"
+              
+              "privateIPAllocationMethod": "Dynamic"
             },
             "name": "LoadBalancerFrontend"
           }
