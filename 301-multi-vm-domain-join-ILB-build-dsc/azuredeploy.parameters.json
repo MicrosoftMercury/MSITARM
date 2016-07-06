@@ -1,81 +1,60 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
   "parameters": {
-      "vmName": {
-      "value": ""
-    },
-    "localAdminUserName": {
-      "value": ""
-    },
-    "localAdminPassword": {
-      "value": ""
-    },
-    "domainJoinUserName": {
-      "value": ""
-    },
-    "domainJoinPassword": {
-      "value": ""
-    },
-    "localAdmins": {
-      "value": ""
-    },
-    "SQLAdmins": {
-      "value": ""
-    },
     "appID": {
-      "value": ""
+      "value": "dev"
     },
     "domainName": {
-      "value": ""
+      "value": "redmond.corp.microsoft.com"
     },
     "env": {
-      "value": ""
+      "value": "dev"
     },
     "orgID": {
-      "value": ""
+      "value": "dev"
     },
     "imagePublisher": {
-      "value": ""
+      "value": "MicrosoftWindowsServer"
     },
     "imageOffer": {
-      "value": ""
+      "value": "WindowsServer"
     },
     "sku": {
-      "value": ""
+      "value": "2012-R2-Datacenter"
     },
     "snoozeDate": {
-      "value": ""
+      "value": "1/1/17"
     },
     "storageAccountType": {
       "value": "Standard_LRS"
     },
-    "userImageStorageAccountName": {
-      "value": ""
-    },
-    "numberOfInstances": {
-      "value": 1
-    },
-     "virtualNetwork": {
-      "value": ""
+    "virtualNetwork": {
+      "value": "OtherPlanToPerform-CORP-USW-VNET-1"
     },
     "vnetResourceGroup": {
-      "value": ""
+      "value": "ERNetwork"
     },
     "vmSize": {
-      "value": "Standard_A2"
-    },
-    "ServerRole": {
-      "value": "App"
+      "value": "Standard_D3_v2"
     },
     "DiskSize": {
-      "value": "200"
+      "value": 200
+    },
+    "DiskConfig": {
+      "value": "IIS"
     },
     "DiskCount": {
       "value": "1"
     },
     "ouPath": {
-      "value": ""
+      "value": "OU=ITManaged,OU=ITServices,DC=redmond,DC=corp,DC=microsoft,DC=com"
+    },
+    "PullServerRegistrationKey": {
+      "value": "DtOvyfhxbRkS+kXw9PerJP4RQx48HxCcvKruEyd/vfz2gKplxr+UtJDpsdBjltyDhhMa5As4OGKFb3M+p5vlbQ=="
+    },
+    "PullServerRegistrationURI": {
+      "value": "https://eus2-agentservice-prod-1.azure-automation.net/accounts/d9886cc8-9990-4461-972b-155d710f1ace"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
   "parameters": {
     "vmName": {
       "type": "string",
@@ -10,6 +10,15 @@
         "description": "Name for the Virtual Machine."
       }
     },
+    "AvailabilitySet": {
+      "type": "string",
+      "defaultValue": "AvSet",
+      "minLength": 3,
+      "metadata": {
+        "description": "Name for the AvailabilitySet."
+      }
+    },
+
     "numberOfInstances": {
       "type": "int",
       "defaultValue": 1,
@@ -54,6 +63,7 @@
         "description": "Size for the Virtual Machine."
       }
     },
+
     "imagePublisher": {
       "type": "string",
       "defaultValue": "",
@@ -186,7 +196,7 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "SQL SYS admins that can login to the Default SQL Instance instaqlled on the VM. csv list of domain\\user"
+        "description": "SQL SYS admins that can login to the Debasefault SQL Instance instaqlled on the VM. csv list of domain\\user"
       }
     },
     "virtualNetwork": {
@@ -218,215 +228,220 @@
       }
     },
     "PullServerRegistrationKey": {
-         "type": "string",
-        "defaultValue": "",
-        "metadata": {
-          "description": "The Organizational Unit the VM will join"
-        }
-      },
-    "PullServerRegistrationURI": {
-         "type": "string",
-        "defaultValue": "",
-        "metadata": {
-          "description": "The pull server URI"
-        }
-      }
-  },
-    "variables": {
-      "apiVersion": "2015-01-01",
-
-      "branch": "master",
-      "folder": "/301-multi-vm-domain-join-build-dsc/",
-      "baseURL": "[concat('https://raw.githubusercontent.com/Microsoft/MSITARM/',variables('branch'),variables('folder'))]",
-  
-      "domainJoinzip": "scripts/DomainJoin.ps1.zip",
-      "formatDiskszip": "scripts/FormatDataDisk.ps1.zip",
-      "formatDiskstemplate": "nested/template-DataDisks.json",
-      "createVMtemplate": "nested/template-MultipleVM.json",
-      "configurePullTemplate":  "nested/template-ConfigureDscPull.json",
-      "configurationFunction": "FormatDataDisks.ps1\\FormatDataDisks",
-      "Role": "[substring(parameters('DiskConfig'),0,3)]",
-           
-      "moduleURL": "[concat(variables('BaseURL'),variables('formatDiskszip'))]",
-      "CreateVMUrl": "[concat(variables('BaseURL'),variables('createVMtemplate'))]",
-      "FormatDisksUrl": "[concat(variables('BaseURL'),variables('formatDiskstemplate'))]",
-      "AttachVMtoPullServerURL": "[concat(variables('BaseURL'),variables('configurePullTemplate'))]",
-      
-      "BuildMachineRoleURL": "[concat(variables('BaseURL'),'nested/template-Build',variables('Role'), '.json')]",
-
-      "AzureAutomation": {
-        "Url": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
-        "RegistrationKey": "[parameters('PullServerRegistrationKey')]",
-        "registrationUrl": "[parameters('PullServerRegistrationURI')]",
-        "nodeConfigurationName": "MSITNoPAK2.Corpnet",
-        "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
-        "timestamp": "1/1/2015"
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The Organizational Unit the VM will join"
       }
     },
-    "resources": [
-      {
-          "apiVersion": "2015-01-01",
-          "name": "[concat(parameters('vmName'),'-CreateVM')]",
-          "type": "Microsoft.Resources/deployments",
-          "properties": {
-              "mode": "Incremental",
-              "templateLink": {
-                  "uri": "[variables('CreateVMUrl')]",
-                  "contentVersion": "1.0.0.0"
-              },
-              "parameters": {
-                  "localAdminUserName": {
-                      "value": "[parameters('localAdminUserName')]"
-                  },
-                  "localAdminPassword": {
-                      "value": "[parameters('localAdminPassword')]"
-                  },
-                  "domainJoinUserName": {
-                      "value": "[parameters('domainJoinUserName')]"
-                  },
-                  "domainJoinPassword": {
-                      "value": "[parameters('domainJoinPassword')]"
-                  },
-                  "vmName": {
-                      "value": "[parameters('vmName')]"
-                  },
-                  "DiskConfig": {
-                      "value": "[parameters('DiskConfig')]"
-                  },
-                  "vmSize": {
-                      "value": "[parameters('vmSize')]"
-                  },
-                  "DiskCount": {
-                      "value": "[parameters('DiskCount')]"
-                  },
-                  "DiskSize": {
-                      "value": "[parameters('DiskSize')]"
-                  },
-                  "numberOfInstances": {
-                       "value": "[parameters('numberOfInstances')]"
-                  },
-                  "imagePublisher": {
-                      "value": "[parameters('imagePublisher')]"
-                  },
-                  "imageOffer": {
-                      "value": "[parameters('imageOffer')]"
-                  },
-                  "sku": {
-                      "value": "[parameters('sku')]"
-                  },
-                  "userImageStorageAccountName": {
-                      "value": "[parameters('userImageStorageAccountName')]"
-                  },
-                "StorageAccountType": {
-                  "value": "[parameters('StorageAccountType')]"
-                },
-                  "domainName": {
-                      "value": "[parameters('domainName')]"
-                  },
-                  "appID": {
-                      "value": "[parameters('appID')]"
-                  },
-                  "orgID": {
-                      "value": "[parameters('orgID')]"
-                  },
-                  "env": {
-                      "value": "[parameters('env')]"
-                  },
-                  "snoozeDate": {
-                      "value": "[parameters('snoozeDate')]"
-                  },
-                "localAdmins": {
-                  "value": "[parameters('localAdmins')]"
-                },
-                "SQLAdmins": {
-                  "value": "[parameters('SQLAdmins')]"
-                },
-                "virtualNetwork": {
-                  "value": "[parameters('virtualNetwork')]"
-                  },
-                "vnetResourceGroup": {
-                      "value": "[parameters('vnetResourceGroup')]"
-                  },
-                "subnetName": {
-                      "value": "[parameters('subnetName')]"
-                  },
-                "ouPath": {
-                      "value": "[parameters('ouPath')]"
-                  }
-              }
-          }
-      },
-      {
-        "apiVersion": "2015-01-01",
-        "name": "[concat(parameters('vmName'),copyindex(1),'-BuildMachineRole-',variables('Role'))]",
-        "type": "Microsoft.Resources/deployments",
-        "copy": {
-          "name": "BuildMachineRoleLoop",
-          "count": "[parameters('numberOfInstances')]"
-        },
-        "properties": {
-          "mode": "Incremental",
-          "templateLink": {
-            "uri": "[variables('BuildMachineRoleURL')]",
-            "contentVersion": "1.0.0.0"
-          },
-          "parameters": {
-            "vmName": {
-              "value": "[concat(parameters('vmName'),copyindex(1))]"
-            },
-            "DiskConfig": {
-              "value": "[parameters('DiskConfig')]"
-            },
-            "vmSize": {
-              "value": "[parameters('vmSize')]"
-            },
-            "DiskCount": {
-              "value": "[parameters('DiskCount')]"
-            },
-            "DiskSize": {
-              "value": "[parameters('DiskSize')]"
-            }
-          }
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Resources/deployments/',parameters('vmName'), '-CreateVM')]"
-        ]
-      },
-      {
-        "apiVersion": "2015-01-01",
-        "name": "[concat('AttachVMtoPullServer',parameters('DiskConfig'),copyindex(1))]",
-        "type": "Microsoft.Resources/deployments",
-        "copy": {
-          "name": "AttachVMtoPullServerLoop",
-          "count": "[parameters('numberOfInstances')]"
-        },
-          "properties": {
-              "mode": "Incremental",
-              "templateLink": {
-                  "uri": "[variables('AttachVMtoPullServerURL')]",
-                  "contentVersion": "1.0.0.0"
-              },
-              "parameters": {
-                "vmName": {
-                  "value": "[concat(parameters('vmName'),copyindex(1))]"
-                },
-                "RegistrationKey": {
-                  "value": "[variables('AzureAutomation').RegistrationKey]"
-                },
-                "registrationUrl": {
-                  "value": "[variables('AzureAutomation').registrationUrl]"
-                },
-                "nodeConfigurationName": {
-                    "value": "[variables('AzureAutomation').nodeConfigurationName]"
-                },
-                "timestamp": {
-                  "value":  "[variables('AzureAutomation').timestamp]"
-                }
-              }
-          },
-          "dependsOn": [
-              "[concat('Microsoft.Resources/deployments/',parameters('vmName'),copyindex(1),'-BuildMachineRole-',variables('Role'))]"
-          ]
+    "PullServerRegistrationURI": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The pull server URI"
       }
-    ]
+    }
+  },
+  "variables": {
+    "apiVersion": "2015-01-01",
+
+    "branch": "master",
+    "folder": "/301-multi-vm-domain-join-ILB-build-dsc/",
+    "baseURL": "[concat('https://raw.githubusercontent.com/MicrosoftMercury/MSITARM/',variables('branch'),variables('folder'))]",
+
+
+
+    "domainJoinzip": "scripts/DomainJoin.ps1.zip",
+    "formatDiskszip": "scripts/FormatDataDisk.ps1.zip",
+    "formatDiskstemplate": "nested/template-DataDisks.json",
+    "createVMtemplate": "nested/template-MultipleVM.json",
+    "configurePullTemplate": "nested/template-ConfigureDscPull.json",
+    "configurationFunction": "FormatDataDisks.ps1\\FormatDataDisks",
+    "Role": "[substring(parameters('DiskConfig'),0,3)]",
+    "moduleURL": "[concat(variables('BaseURL'),variables('formatDiskszip'))]",
+    "CreateVMUrl": "[concat(variables('BaseURL'),variables('createVMtemplate'))]",
+    "FormatDisksUrl": "[concat(variables('BaseURL'),variables('formatDiskstemplate'))]",
+    "AttachVMtoPullServerURL": "[concat(variables('BaseURL'),variables('configurePullTemplate'))]",
+
+    "BuildMachineRoleURL": "[concat(variables('BaseURL'),'nested/template-Build',variables('Role'), '.json')]",
+
+    "AzureAutomation": {
+      "Url": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
+      "RegistrationKey": "[parameters('PullServerRegistrationKey')]",
+      "registrationUrl": "[parameters('PullServerRegistrationURI')]",
+      "nodeConfigurationName": "MSITNoPAK2.Corpnet",
+      "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
+      "timestamp": "1/1/2015"
+    }
+  },
+  "resources": [
+     {
+      "apiVersion": "2015-01-01",
+      "name": "[concat(parameters('vmName'),'-CreateVM')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('CreateVMUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "localAdminUserName": {
+            "value": "[parameters('localAdminUserName')]"
+          },
+          "localAdminPassword": {
+            "value": "[parameters('localAdminPassword')]"
+          },
+          "domainJoinUserName": {
+            "value": "[parameters('domainJoinUserName')]"
+          },
+          "domainJoinPassword": {
+            "value": "[parameters('domainJoinPassword')]"
+          },
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "AvailabilitySet": {
+            "value": "[parameters('AvailabilitySet')]"
+          },
+          "DiskConfig": {
+            "value": "[parameters('DiskConfig')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "DiskCount": {
+            "value": "[parameters('DiskCount')]"
+          },
+          "DiskSize": {
+            "value": "[parameters('DiskSize')]"
+          },
+          "numberOfInstances": {
+            "value": "[parameters('numberOfInstances')]"
+          },
+          "imagePublisher": {
+            "value": "[parameters('imagePublisher')]"
+          },
+          "imageOffer": {
+            "value": "[parameters('imageOffer')]"
+          },
+          "sku": {
+            "value": "[parameters('sku')]"
+          },
+          "userImageStorageAccountName": {
+            "value": "[parameters('userImageStorageAccountName')]"
+          },
+          "StorageAccountType": {
+            "value": "[parameters('StorageAccountType')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "appID": {
+            "value": "[parameters('appID')]"
+          },
+          "orgID": {
+            "value": "[parameters('orgID')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          },
+          "snoozeDate": {
+            "value": "[parameters('snoozeDate')]"
+          },
+          "localAdmins": {
+            "value": "[parameters('localAdmins')]"
+          },
+          "SQLAdmins": {
+            "value": "[parameters('SQLAdmins')]"
+          },
+          "virtualNetwork": {
+            "value": "[parameters('virtualNetwork')]"
+          },
+          "vnetResourceGroup": {
+            "value": "[parameters('vnetResourceGroup')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "ouPath": {
+            "value": "[parameters('ouPath')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "name": "[concat(parameters('vmName'),copyindex(1),'-BuildMachineRole-',variables('Role'))]",
+      "type": "Microsoft.Resources/deployments",
+      "copy": {
+        "name": "BuildMachineRoleLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('BuildMachineRoleURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[concat(parameters('vmName'),copyindex(1))]"
+          },
+          "DiskConfig": {
+            "value": "[parameters('DiskConfig')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "DiskCount": {
+            "value": "[parameters('DiskCount')]"
+          },
+          "DiskSize": {
+            "value": "[parameters('DiskSize')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/',parameters('vmName'), '-CreateVM')]"        
+      ]
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "name": "[concat('AttachVMtoPullServer',parameters('DiskConfig'),copyindex(1))]",
+      "type": "Microsoft.Resources/deployments",
+      "copy": {
+        "name": "AttachVMtoPullServerLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('AttachVMtoPullServerURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+
+        "parameters": {
+          "vmName": {
+            "value": "[concat(parameters('vmName'),copyindex(1))]"
+          },
+          "RegistrationKey": {
+            "value": "[variables('AzureAutomation').RegistrationKey]"
+          },
+          "registrationUrl": {
+            "value": "[variables('AzureAutomation').registrationUrl]"
+          },
+          "nodeConfigurationName": {
+            "value": "[variables('AzureAutomation').nodeConfigurationName]"
+          },
+          "timestamp": {
+            "value": "[variables('AzureAutomation').timestamp]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/',parameters('vmName'),copyindex(1),'-BuildMachineRole-',variables('Role'))]"
+      ]
+    }
+  ]
 }
