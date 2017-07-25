@@ -30,7 +30,7 @@
       "value": "Standard_LRS"
     },
     "virtualNetwork": {
-      "value": "OtherPlanToPerform-CORP-USW-VNET-1"
+      "value": "PL-CORP-WUS2-VNET-1"
     },
     "vnetResourceGroup": {
       "value": "ERNetwork"
