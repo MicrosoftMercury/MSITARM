@@ -12,7 +12,7 @@
     },
     "LoadBalancerName": {
       "type": "string",
-      "defaultValue": "BackendLB",
+      "defaultValue": "",
       "minLength": 3,
       "metadata": {
         "description": "Name for the LoadBalancerName."
@@ -20,7 +20,7 @@
     },
     "AvailabilitySet": {
       "type": "string",
-      "defaultValue": "AvSet",
+      "defaultValue": "",
       "minLength": 3,
       "metadata": {
         "description": "Name for the AvailabilitySet."
