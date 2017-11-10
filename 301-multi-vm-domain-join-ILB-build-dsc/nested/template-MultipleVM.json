@@ -10,6 +10,14 @@
         "description": "Name for the Virtual Machine."
       }
     },
+    "LoadBalancerName": {
+      "type": "string",
+      "defaultValue": "BackendLB",
+      "minLength": 3,
+      "metadata": {
+        "description": "Name for the LoadBalancerName."
+      }
+    },
     "AvailabilitySet": {
       "type": "string",
       "defaultValue": "AvSet",
@@ -254,7 +262,7 @@
     "imagePublisher": "[parameters('imagePublisher')]",
     "sku": "[parameters('sku')]",
     "nicName": "[parameters('vmName')]",
-    "loadBalancerName": "BackendLB",
+    "loadBalancerName": "[parameters('LoadBalancerName')]",
     "lbId": "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName'))]",
     "osDiskVhdName": "[concat('http://',parameters('userImageStorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),'osDisk')]",
     "subnetName": "[parameters('subnetName')]",
